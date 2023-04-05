@@ -78,6 +78,63 @@ function wp_crossref_doi_save_metadata($post_id) {
 }
 
 // wp_crossref_doi_create_xml(): Génère le fichier XML en utilisant les métadonnées de l'article et le modèle fourni par CrossRef.
+function wp_crossref_doi_save_metadata($post_id) {
+    // Vérifier si notre champ de nonce est défini.
+    if (!isset($_POST['wp_crossref_doi_metadata_nonce'])) {
+        return;
+    }
+
+    // Vérifier que le nonce est valide.
+    if (!wp_verify_nonce($_POST['wp_crossref_doi_metadata_nonce'], 'wp_crossref_doi_save_metadata')) {
+        return;
+    }
+
+    // Si c'est une sauvegarde automatique, ne faites rien.
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    // Vérifiez les autorisations de l'utilisateur.
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+
+    // Enregistrez les métadonnées.
+    if (isset($_POST['wp_crossref_doi_metadata'])) {
+        $metadata = array_map('sanitize_text_field', $_POST['wp_crossref_doi_metadata']);
+        update_post_meta($post_id, 'wp_crossref_doi_metadata', $metadata);
+    }
+}
+
+// wp_crossref_doi_validate_xml(): Valide le fichier XML en utilisant les outils de test de CrossRef.
+function wp_crossref_doi_validate_xml($xml) {
+    $url = 'https://api.crossref.org/tools/xmlvalidate';
+
+    // Initialiser cURL
+    $ch = curl_init($url);
+
+    // Configurer cURL
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/xml'));
+
+    // Exécuter cURL et récupérer la réponse
+    $response = curl_exec($ch);
+
+    // Fermer cURL
+    curl_close($ch);
+
+    // Traiter la réponse
+    $xml_response = simplexml_load_string($response);
+    $validation_status = $xml_response->status;
+
+    if ($validation_status == 'valid') {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 
 
