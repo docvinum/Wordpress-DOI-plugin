@@ -77,6 +77,10 @@ function wp_crossref_doi_save_metadata($post_id) {
     }
 }
 
+// wp_crossref_doi_create_xml(): Génère le fichier XML en utilisant les métadonnées de l'article et le modèle fourni par CrossRef.
+
+
+
 
 
 // Initialiser les paramètres du plugin
