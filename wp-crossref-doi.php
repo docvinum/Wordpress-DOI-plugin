@@ -439,8 +439,6 @@ function wp_crossref_doi_enqueue_admin_scripts($hook) {
 
 add_action('admin_enqueue_scripts', 'wp_crossref_doi_enqueue_admin_scripts');
 
-// ...
-
 
 // Initialiser les paramètres du plugin
 add_action('admin_menu', 'wp_crossref_doi_create_settings_page');
