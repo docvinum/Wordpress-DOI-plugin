@@ -4,7 +4,7 @@
  * Plugin URI: https://example.com/wp-crossref-doi
  * Description: Un plugin WordPress pour générer des DOI pour les articles en utilisant l'API CrossRef.
  * Version: 1.0.0
- * Author: Alexandre Bastard AKA Docvinum
+ * Author: Alexandre Bastard AKA DocVinum
  * Author URI: https://etoh.digital
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -14,6 +14,28 @@
 defined('ABSPATH') or die('No script kiddies please!');
 
 // Inclure toutes les fonctions ci-dessous
+
+// wp_crossref_doi_create_settings_page(): Crée la page de paramètres dans l'administration de WordPress.
+function wp_crossref_doi_create_settings_page() {
+    // Ajouter une page de menu dans l'administration de WordPress
+    add_options_page(
+        __('Paramètres de DOI CrossRef', 'wp-crossref-doi'),
+        __('DOI CrossRef', 'wp-crossref-doi'),
+        'manage_options',
+        'wp-crossref-doi',
+        'wp_crossref_doi_render_settings'
+    );
+}
+add_action('admin_menu', 'wp_crossref_doi_create_settings_page');
+
+// wp_crossref_doi_settings_init(): Initialise les champs et sections de paramètres.
+
+// wp_crossref_doi_render_settings(): Rendu des champs et sections de paramètres.
+
+// wp_crossref_doi_add_button(): Ajoute le bouton 'DOI' dans l'écran 'Posts'.
+
+// wp_crossref_doi_generate(): Génère un DOI unique et l'enregistre dans les "Custom Fields" de l'article.
+
 
 // wp_crossref_doi_render_metadata_form(): Crée et affiche le formulaire de métadonnées pour l'utilisateur.
 function wp_crossref_doi_render_metadata_form($post) {
