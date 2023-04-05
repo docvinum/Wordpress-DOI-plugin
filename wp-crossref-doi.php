@@ -174,6 +174,36 @@ function wp_crossref_doi_submit_xml($xml, $mode = 'test') {
     return $response;
 }
 
+// wp_crossref_doi_handle_errors(): Gère les erreurs potentielles lors de l'interaction avec l'API CrossRef et informe l'utilisateur.
+function wp_crossref_doi_handle_errors($response) {
+    if (empty($response)) {
+        return array(
+            'error' => true,
+            'message' => __("Erreur : aucune réponse de l'API CrossRef.", 'wp-crossref-doi')
+        );
+    }
+
+    $xml_response = simplexml_load_string($response);
+    $status = $xml_response->status;
+
+    if ($status == 'error') {
+        $error_message = __("Erreur lors de l'interaction avec l'API CrossRef :", 'wp-crossref-doi');
+
+        foreach ($xml_response->messages->message as $message) {
+            $error_message .= "\n" . (string)$message;
+        }
+
+        return array(
+            'error' => true,
+            'message' => $error_message
+        );
+    } else {
+        return array(
+            'error' => false,
+            'message' => __("Aucune erreur détectée.", 'wp-crossref-doi')
+        );
+    }
+}
 
 
 
