@@ -418,8 +418,28 @@ function wp_crossref_doi_display_response($response) {
     }
 }
 
+/**
+ * Enqueue admin scripts for the plugin.
+ *
+ * This function enqueues the necessary JavaScript file(s) for the plugin's
+ * admin functionality. It only enqueues the script(s) on the post editing
+ * and post creation pages in the WordPress admin area.
+ *
+ * @param string $hook The current admin page hook.
+ */
+function wp_crossref_doi_enqueue_admin_scripts($hook) {
+    if ('post.php' !== $hook && 'post-new.php' !== $hook) {
+        return;
+    }
+
+    wp_register_script('wp-crossref-doi-admin-script', plugins_url('js/admin-script.js', __FILE__), array('jquery'), '1.0.0', true);
+    wp_enqueue_script('wp-crossref-doi-admin-script');
+}
 
 
+add_action('admin_enqueue_scripts', 'wp_crossref_doi_enqueue_admin_scripts');
+
+// ...
 
 
 // Initialiser les paramètres du plugin
@@ -483,3 +503,6 @@ function wp_crossref_doi_init() {
     load_plugin_textdomain('wp-crossref-doi', false, basename(dirname(__FILE__)) . '/languages');
 }
 add_action('init', 'wp_crossref_doi_init');
+
+
+
