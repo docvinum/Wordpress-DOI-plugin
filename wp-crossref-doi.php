@@ -98,9 +98,27 @@ function wp_crossref_doi_render_settings() {
 
     // Afficher les champs de saisie
     ?>
-    <input type="text" name="wp_crossref_doi_options[prod_login_id]" value="<?php echo esc_attr($prod_login_id); ?>">
-    ...
+    Identifiant de connexion (Production):<br>
+    <input type="text" name="wp_crossref_doi_options[prod_login_id]" value="<?php echo esc_attr($prod_login_id); ?>"><br>
+    
+    Mot de passe (Production):<br>
+    <input type="password" name="wp_crossref_doi_options[prod_login_passwd]" value="<?php echo esc_attr($prod_login_passwd); ?>"><br>
+    
+    Identifiant de connexion (Test):<br>
+    <input type="text" name="wp_crossref_doi_options[test_login_id]" value="<?php echo esc_attr($test_login_id); ?>"><br>
+    
+    Mot de passe (Test):<br>
+    <input type="password" name="wp_crossref_doi_options[test_login_passwd]" value="<?php echo esc_attr($test_login_passwd); ?>"><br>
+    
+    Environnement:<br>
+    <select name="wp_crossref_doi_options[environment]">
+        <option value="test" <?php selected($environment, 'test'); ?>>Test</option>
+        <option value="production" <?php selected($environment, 'production'); ?>>Production</option>
+    </select>
+    
     <?php
+    // Ajouter un bouton "Enregistrer"
+    submit_button();
 }
 
 
