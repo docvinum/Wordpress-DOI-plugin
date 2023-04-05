@@ -9,9 +9,8 @@
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
-
-// Vérifier si l'accès direct est protégé
-defined('ABSPATH') or die('No script kiddies please!');
+// Empêcher l'accès direct au fichier
+defined('ABSPATH') or die('Accès direct interdit.');
 
 // Inclure toutes les fonctions ci-dessous
 
@@ -459,3 +458,28 @@ function wp_crossref_doi_add_to_content($content) {
 
     return $content;
 }
+
+/**
+ * Activation du plugin
+ */
+function wp_crossref_doi_activation() {
+    // Code à exécuter lors de l'activation du plugin
+}
+register_activation_hook(__FILE__, 'wp_crossref_doi_activation');
+
+/**
+ * Désactivation du plugin
+ */
+function wp_crossref_doi_deactivation() {
+    // Code à exécuter lors de la désactivation du plugin
+}
+register_deactivation_hook(__FILE__, 'wp_crossref_doi_deactivation');
+
+/**
+ * Démarrage du plugin
+ */
+function wp_crossref_doi_init() {
+    // Code à exécuter lors du démarrage du plugin (initialisation, chargement des dépendances, etc.)
+    load_plugin_textdomain('wp-crossref-doi', false, basename(dirname(__FILE__)) . '/languages');
+}
+add_action('init', 'wp_crossref_doi_init');
