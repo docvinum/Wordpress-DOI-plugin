@@ -13,7 +13,8 @@
 // Vérifier si l'accès direct est protégé
 defined('ABSPATH') or die('No script kiddies please!');
 
-// Inclure toutes les fonctions ici
+// Inclure toutes les fonctions ci-dessous
+
 // wp_crossref_doi_render_metadata_form(): Crée et affiche le formulaire de métadonnées pour l'utilisateur.
 function wp_crossref_doi_render_metadata_form($post) {
     $post_id = $post->ID;
@@ -135,6 +136,46 @@ function wp_crossref_doi_validate_xml($xml) {
         return false;
     }
 }
+
+// wp_crossref_doi_submit_xml(): Soumet le fichier XML validé à l'API CrossRef en utilisant HTTPS POST.
+function wp_crossref_doi_submit_xml($xml, $mode = 'test') {
+    // Choisir l'URL appropriée en fonction du mode
+    if ($mode == 'production') {
+        $url = 'https://doi.crossref.org/servlet/deposit';
+    } else {
+        $url = 'https://test.crossref.org/servlet/deposit';
+    }
+
+    // Récupérer les paramètres de l'utilisateur
+    $options = get_option('wp_crossref_doi_options');
+    $login_id = $options[$mode . '_login_id'];
+    $login_passwd = $options[$mode . '_login_passwd'];
+
+    // Initialiser cURL
+    $ch = curl_init($url);
+
+    // Configurer cURL
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+        'operation' => 'doMDUpload',
+        'login_id' => $login_id,
+        'login_passwd' => $login_passwd,
+        'fname' => new CURLFile($xml, 'application/xml', 'filename.xml')
+    ));
+
+    // Exécuter cURL et récupérer la réponse
+    $response = curl_exec($ch);
+
+    // Fermer cURL
+    curl_close($ch);
+
+    // Retourner la réponse
+    return $response;
+}
+
+
+
 
 
 
