@@ -85,8 +85,57 @@ function wp_crossref_doi_settings_init() {
 }
 add_action('admin_init', 'wp_crossref_doi_settings_init');
 
-
 // wp_crossref_doi_render_settings(): Rendu des champs et sections de paramètres.
+function wp_crossref_doi_render_settings() {
+    ?>
+    <form action='options.php' method='post'>
+        <h1><?php _e('Paramètres de DOI CrossRef', 'wp-crossref-doi'); ?></h1>
+        <?php
+        settings_fields('wp_crossref_doi');
+        do_settings_sections('wp_crossref_doi');
+        submit_button();
+        ?>
+    </form>
+    <?php
+}
+
+function wp_crossref_doi_login_id_prod_render() {
+    $options = get_option('wp_crossref_doi_settings');
+    ?>
+    <input type='text' name='wp_crossref_doi_settings[login_id_prod]' value='<?php echo $options['login_id_prod']; ?>'>
+    <?php
+}
+
+function wp_crossref_doi_login_passwd_prod_render() {
+    $options = get_option('wp_crossref_doi_settings');
+    ?>
+    <input type='password' name='wp_crossref_doi_settings[login_passwd_prod]' value='<?php echo $options['login_passwd_prod']; ?>'>
+    <?php
+}
+
+function wp_crossref_doi_login_id_test_render() {
+    $options = get_option('wp_crossref_doi_settings');
+    ?>
+    <input type='text' name='wp_crossref_doi_settings[login_id_test]' value='<?php echo $options['login_id_test']; ?>'>
+    <?php
+}
+
+function wp_crossref_doi_login_passwd_test_render() {
+    $options = get_option('wp_crossref_doi_settings');
+    ?>
+    <input type='password' name='wp_crossref_doi_settings[login_passwd_test]' value='<?php echo $options['login_passwd_test']; ?>'>
+    <?php
+}
+
+function wp_crossref_doi_environment_render() {
+    $options = get_option('wp_crossref_doi_settings');
+    ?>
+    <select name='wp_crossref_doi_settings[environment]'>
+        <option value='production' <?php selected($options['environment'], 'production'); ?>><?php _e('Production', 'wp-crossref-doi'); ?></option>
+        <option value='test' <?php selected($options['environment'], 'test'); ?>><?php _e('Test', 'wp-crossref-doi'); ?></option>
+    </select>
+    <?php
+}
 
 // wp_crossref_doi_add_button(): Ajoute le bouton 'DOI' dans l'écran 'Posts'.
 
