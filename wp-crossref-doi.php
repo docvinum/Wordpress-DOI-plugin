@@ -153,7 +153,20 @@ function wp_crossref_doi_add_button($actions, $post) {
 add_filter('post_row_actions', 'wp_crossref_doi_add_button', 10, 2);
 
 // wp_crossref_doi_generate(): Génère un DOI unique et l'enregistre dans les "Custom Fields" de l'article.
+function wp_crossref_doi_generate($post_id) {
+    // Vérifier si un DOI existe déjà
+    $existing_doi = get_post_meta($post_id, 'DOI', true);
 
+    if (empty($existing_doi)) {
+        // Générer un DOI unique
+        $doi_prefix = '10.1234'; // Remplacez par votre préfixe DOI fourni par CrossRef
+        $doi_suffix = uniqid();
+        $doi = $doi_prefix . '/' . $doi_suffix;
+
+        // Enregistrer le DOI dans les Custom Fields de l'article
+        update_post_meta($post_id, 'DOI', $doi);
+    }
+}
 
 // wp_crossref_doi_render_metadata_form(): Crée et affiche le formulaire de métadonnées pour l'utilisateur.
 function wp_crossref_doi_render_metadata_form($post) {
