@@ -14,7 +14,39 @@
 defined('ABSPATH') or die('No script kiddies please!');
 
 // Inclure toutes les fonctions ici
-// ...
+function wp_crossref_doi_render_metadata_form($post) {
+    $post_id = $post->ID;
+    $metadata = get_post_meta($post_id, 'wp_crossref_doi_metadata', true);
+    
+    // Titre
+    echo '<p><label for="wp_crossref_doi_metadata_title">' . __('Titre', 'wp-crossref-doi') . '</label>';
+    echo '<input type="text" id="wp_crossref_doi_metadata_title" name="wp_crossref_doi_metadata[title]" value="' . esc_attr($metadata['title']) . '"></p>';
+    
+    // Auteurs
+    echo '<p><label for="wp_crossref_doi_metadata_authors">' . __('Auteurs (séparés par des virgules)', 'wp-crossref-doi') . '</label>';
+    echo '<input type="text" id="wp_crossref_doi_metadata_authors" name="wp_crossref_doi_metadata[authors]" value="' . esc_attr($metadata['authors']) . '"></p>';
+    
+    // Date de publication
+    echo '<p><label for="wp_crossref_doi_metadata_publication_date">' . __('Date de publication', 'wp-crossref-doi') . '</label>';
+    echo '<input type="date" id="wp_crossref_doi_metadata_publication_date" name="wp_crossref_doi_metadata[publication_date]" value="' . esc_attr($metadata['publication_date']) . '"></p>';
+    
+    // Nom de la conférence
+    echo '<p><label for="wp_crossref_doi_metadata_conference_name">' . __('Nom de la conférence', 'wp-crossref-doi') . '</label>';
+    echo '<input type="text" id="wp_crossref_doi_metadata_conference_name" name="wp_crossref_doi_metadata[conference_name]" value="' . esc_attr($metadata['conference_name']) . '"></p>';
+    
+    // Lieu de la conférence
+    echo '<p><label for="wp_crossref_doi_metadata_conference_location">' . __('Lieu de la conférence', 'wp-crossref-doi') . '</label>';
+    echo '<input type="text" id="wp_crossref_doi_metadata_conference_location" name="wp_crossref_doi_metadata[conference_location]" value="' . esc_attr($metadata['conference_location']) . '"></p>';
+    
+    // Date de début de la conférence
+    echo '<p><label for="wp_crossref_doi_metadata_conference_start_date">' . __('Date de début de la conférence', 'wp-crossref-doi') . '</label>';
+    echo '<input type="date" id="wp_crossref_doi_metadata_conference_start_date" name="wp_crossref_doi_metadata[conference_start_date]" value="' . esc_attr($metadata['conference_start_date']) . '"></p>';
+    
+    // Date de fin de la conférence
+    echo '<p><label for="wp_crossref_doi_metadata_conference_end_date">' . __('Date de fin de la conférence', 'wp-crossref-doi') . '</label>';
+    echo '<input type="date" id="wp_crossref_doi_metadata_conference_end_date" name="wp_crossref_doi_metadata[conference_end_date]" value="' . esc_attr($metadata['conference_end_date']) . '"></p>';
+}
+
 
 // Initialiser les paramètres du plugin
 add_action('admin_menu', 'wp_crossref_doi_create_settings_page');
