@@ -86,17 +86,23 @@ add_action('admin_init', 'wp_crossref_doi_settings_init');
 
 // wp_crossref_doi_render_settings(): Rendu des champs et sections de paramètres.
 function wp_crossref_doi_render_settings() {
+    // Récupérer les options enregistrées
+    $options = get_option('wp_crossref_doi_options');
+
+    // Vérifier si chaque option est définie, sinon utiliser une valeur par défaut
+    $prod_login_id = isset($options['prod_login_id']) ? $options['prod_login_id'] : '';
+    $prod_login_passwd = isset($options['prod_login_passwd']) ? $options['prod_login_passwd'] : '';
+    $test_login_id = isset($options['test_login_id']) ? $options['test_login_id'] : '';
+    $test_login_passwd = isset($options['test_login_passwd']) ? $options['test_login_passwd'] : '';
+    $environment = isset($options['environment']) ? $options['environment'] : 'test';
+
+    // Afficher les champs de saisie
     ?>
-    <form action='options.php' method='post'>
-        <h1><?php _e('Paramètres de DOI CrossRef', 'wp-crossref-doi'); ?></h1>
-        <?php
-        settings_fields('wp_crossref_doi');
-        do_settings_sections('wp_crossref_doi');
-        submit_button();
-        ?>
-    </form>
+    <input type="text" name="wp_crossref_doi_options[prod_login_id]" value="<?php echo esc_attr($prod_login_id); ?>">
+    ...
     <?php
 }
+
 
 function wp_crossref_doi_login_id_prod_render() {
     $options = get_option('wp_crossref_doi_settings');
