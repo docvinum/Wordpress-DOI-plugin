@@ -29,6 +29,62 @@ function wp_crossref_doi_create_settings_page() {
 add_action('admin_menu', 'wp_crossref_doi_create_settings_page');
 
 // wp_crossref_doi_settings_init(): Initialise les champs et sections de paramètres.
+function wp_crossref_doi_settings_init() {
+    // Enregistrer les paramètres
+    register_setting('wp_crossref_doi', 'wp_crossref_doi_settings');
+
+    // Ajouter une section pour les paramètres de connexion
+    add_settings_section(
+        'wp_crossref_doi_login_section',
+        __('Paramètres de connexion', 'wp-crossref-doi'),
+        '',
+        'wp_crossref_doi'
+    );
+
+    // Ajouter les champs pour les identifiants de connexion
+    add_settings_field(
+        'login_id_prod',
+        __('Identifiant de connexion (Production)', 'wp-crossref-doi'),
+        'wp_crossref_doi_login_id_prod_render',
+        'wp_crossref_doi',
+        'wp_crossref_doi_login_section'
+    );
+
+    add_settings_field(
+        'login_passwd_prod',
+        __('Mot de passe (Production)', 'wp-crossref-doi'),
+        'wp_crossref_doi_login_passwd_prod_render',
+        'wp_crossref_doi',
+        'wp_crossref_doi_login_section'
+    );
+
+    add_settings_field(
+        'login_id_test',
+        __('Identifiant de connexion (Test)', 'wp-crossref-doi'),
+        'wp_crossref_doi_login_id_test_render',
+        'wp_crossref_doi',
+        'wp_crossref_doi_login_section'
+    );
+
+    add_settings_field(
+        'login_passwd_test',
+        __('Mot de passe (Test)', 'wp-crossref-doi'),
+        'wp_crossref_doi_login_passwd_test_render',
+        'wp_crossref_doi',
+        'wp_crossref_doi_login_section'
+    );
+
+    // Ajouter un champ pour sélectionner l'environnement (test ou production)
+    add_settings_field(
+        'environment',
+        __('Environnement', 'wp-crossref-doi'),
+        'wp_crossref_doi_environment_render',
+        'wp_crossref_doi',
+        'wp_crossref_doi_login_section'
+    );
+}
+add_action('admin_init', 'wp_crossref_doi_settings_init');
+
 
 // wp_crossref_doi_render_settings(): Rendu des champs et sections de paramètres.
 
