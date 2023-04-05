@@ -4,8 +4,8 @@
  * Plugin URI: https://example.com/wp-crossref-doi
  * Description: Un plugin WordPress pour générer des DOI pour les articles en utilisant l'API CrossRef.
  * Version: 1.0.0
- * Author: Your Name
- * Author URI: https://example.com
+ * Author: Alexandre Bastard AKA Docvinum
+ * Author URI: https://etoh.digital
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
@@ -114,12 +114,21 @@ function wp_crossref_doi_create_xml($post_id, $metadata) {
 
     // Ajouter les auteurs
     $authors = $paper->addChild('contributors');
-    foreach ($metadata['authors'] as $author) {
+    $author_list = explode(',', $metadata['authors']);
+    $author_sequence = 1;
+    foreach ($author_list as $author_name) {
+        $author_name = trim($author_name);
+        $name_parts = explode(' ', $author_name);
+        $given_name = array_shift($name_parts);
+        $surname = implode(' ', $name_parts);
+        
         $author_node = $authors->addChild('person_name');
-        $author_node->addAttribute('sequence', $author['sequence']);
+        $author_node->addAttribute('sequence', 'first');
         $author_node->addAttribute('contributor_role', 'author');
-        $author_node->addChild('given_name', $author['given_name']);
-        $author_node->addChild('surname', $author['surname']);
+        $author_node->addChild('given_name', $given_name);
+        $author_node->addChild('surname', $surname);
+        
+        $author_sequence++;
     }
 
     // Enregistrer le fichier XML
@@ -128,7 +137,6 @@ function wp_crossref_doi_create_xml($post_id, $metadata) {
 
     return $xml_filename;
 }
-
 
 // wp_crossref_doi_validate_xml(): Valide le fichier XML en utilisant les outils de test de CrossRef.
 function wp_crossref_doi_validate_xml($xml) {
