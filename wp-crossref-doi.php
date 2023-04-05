@@ -79,33 +79,56 @@ function wp_crossref_doi_save_metadata($post_id) {
 }
 
 // wp_crossref_doi_create_xml(): Génère le fichier XML en utilisant les métadonnées de l'article et le modèle fourni par CrossRef.
-function wp_crossref_doi_save_metadata($post_id) {
-    // Vérifier si notre champ de nonce est défini.
-    if (!isset($_POST['wp_crossref_doi_metadata_nonce'])) {
-        return;
+function wp_crossref_doi_create_xml($post_id, $metadata) {
+    // Récupérer les informations de l'article
+    $post = get_post($post_id);
+    $doi = get_post_meta($post_id, 'DOI', true);
+
+    // Créer le fichier XML
+    $xml = new SimpleXMLElement('<root/>');
+
+    // Ajouter les namespaces
+    $xml->addAttribute('xmlns', 'http://www.crossref.org/schema/5.3.0');
+    $xml->addAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+    $xml->addAttribute('xsi:schemaLocation', 'http://www.crossref.org/schema/5.3.0 http://www.crossref.org/schema/deposit/crossref5.3.0.xsd');
+
+    // Ajouter les informations du déposant
+    $depositor = $xml->addChild('depositor');
+    $depositor->addChild('depositor_name', $metadata['depositor_name']);
+    $depositor->addChild('email_address', $metadata['email_address']);
+
+    // Ajouter les informations sur la publication
+    $publication = $xml->addChild('publication');
+    $publication->addChild('doi_batch_id', $doi);
+
+    // Ajouter les informations sur les actes de conférence
+    $proceedings = $publication->addChild('proceedings');
+    $proceedings->addChild('doi', $doi);
+    $proceedings->addChild('resource', get_permalink($post_id));
+
+    // Ajouter les informations sur le document
+    $paper = $proceedings->addChild('conference_paper');
+    $paper->addChild('doi', $doi);
+    $paper->addChild('resource', get_permalink($post_id));
+    $paper->addChild('title', $post->post_title);
+
+    // Ajouter les auteurs
+    $authors = $paper->addChild('contributors');
+    foreach ($metadata['authors'] as $author) {
+        $author_node = $authors->addChild('person_name');
+        $author_node->addAttribute('sequence', $author['sequence']);
+        $author_node->addAttribute('contributor_role', 'author');
+        $author_node->addChild('given_name', $author['given_name']);
+        $author_node->addChild('surname', $author['surname']);
     }
 
-    // Vérifier que le nonce est valide.
-    if (!wp_verify_nonce($_POST['wp_crossref_doi_metadata_nonce'], 'wp_crossref_doi_save_metadata')) {
-        return;
-    }
+    // Enregistrer le fichier XML
+    $xml_filename = 'crossref_' . $doi . '.xml';
+    $xml->asXML($xml_filename);
 
-    // Si c'est une sauvegarde automatique, ne faites rien.
-    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-        return;
-    }
-
-    // Vérifiez les autorisations de l'utilisateur.
-    if (!current_user_can('edit_post', $post_id)) {
-        return;
-    }
-
-    // Enregistrez les métadonnées.
-    if (isset($_POST['wp_crossref_doi_metadata'])) {
-        $metadata = array_map('sanitize_text_field', $_POST['wp_crossref_doi_metadata']);
-        update_post_meta($post_id, 'wp_crossref_doi_metadata', $metadata);
-    }
+    return $xml_filename;
 }
+
 
 // wp_crossref_doi_validate_xml(): Valide le fichier XML en utilisant les outils de test de CrossRef.
 function wp_crossref_doi_validate_xml($xml) {
