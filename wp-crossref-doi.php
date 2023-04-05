@@ -14,6 +14,7 @@
 defined('ABSPATH') or die('No script kiddies please!');
 
 // Inclure toutes les fonctions ici
+// wp_crossref_doi_render_metadata_form(): Crée et affiche le formulaire de métadonnées pour l'utilisateur.
 function wp_crossref_doi_render_metadata_form($post) {
     $post_id = $post->ID;
     $metadata = get_post_meta($post_id, 'wp_crossref_doi_metadata', true);
@@ -46,6 +47,36 @@ function wp_crossref_doi_render_metadata_form($post) {
     echo '<p><label for="wp_crossref_doi_metadata_conference_end_date">' . __('Date de fin de la conférence', 'wp-crossref-doi') . '</label>';
     echo '<input type="date" id="wp_crossref_doi_metadata_conference_end_date" name="wp_crossref_doi_metadata[conference_end_date]" value="' . esc_attr($metadata['conference_end_date']) . '"></p>';
 }
+
+// wp_crossref_doi_save_metadata(): Sauvegarde les métadonnées saisies par l'utilisateur.
+function wp_crossref_doi_save_metadata($post_id) {
+    // Vérifier si notre champ de nonce est défini.
+    if (!isset($_POST['wp_crossref_doi_metadata_nonce'])) {
+        return;
+    }
+
+    // Vérifier que le nonce est valide.
+    if (!wp_verify_nonce($_POST['wp_crossref_doi_metadata_nonce'], 'wp_crossref_doi_save_metadata')) {
+        return;
+    }
+
+    // Si c'est une sauvegarde automatique, ne faites rien.
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    // Vérifiez les autorisations de l'utilisateur.
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+
+    // Enregistrez les métadonnées.
+    if (isset($_POST['wp_crossref_doi_metadata'])) {
+        $metadata = array_map('sanitize_text_field', $_POST['wp_crossref_doi_metadata']);
+        update_post_meta($post_id, 'wp_crossref_doi_metadata', $metadata);
+    }
+}
+
 
 
 // Initialiser les paramètres du plugin
