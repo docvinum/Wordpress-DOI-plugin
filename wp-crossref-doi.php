@@ -460,7 +460,6 @@ function wp_crossref_doi_enqueue_admin_scripts($hook) {
     wp_enqueue_script('wp-crossref-doi-admin-script');
 }
 
-
 add_action('admin_enqueue_scripts', 'wp_crossref_doi_enqueue_admin_scripts');
 
 
@@ -525,6 +524,3 @@ function wp_crossref_doi_init() {
     load_plugin_textdomain('wp-crossref-doi', false, basename(dirname(__FILE__)) . '/languages');
 }
 add_action('init', 'wp_crossref_doi_init');
-
-
-
