@@ -138,6 +138,19 @@ function wp_crossref_doi_environment_render() {
 }
 
 // wp_crossref_doi_add_button(): Ajoute le bouton 'DOI' dans l'écran 'Posts'.
+function wp_crossref_doi_add_button($actions, $post) {
+    if ('publish' == $post->post_status && current_user_can('edit_post', $post->ID)) {
+        $actions['crossref_doi'] = sprintf(
+            '<a href="%s" aria-label="%s">%s</a>',
+            admin_url('admin.php?page=crossref-doi-metadata&amp;post_id=' . $post->ID),
+            esc_attr__('Générer DOI', 'wp-crossref-doi'),
+            esc_html__('DOI', 'wp-crossref-doi')
+        );
+    }
+
+    return $actions;
+}
+add_filter('post_row_actions', 'wp_crossref_doi_add_button', 10, 2);
 
 // wp_crossref_doi_generate(): Génère un DOI unique et l'enregistre dans les "Custom Fields" de l'article.
 
