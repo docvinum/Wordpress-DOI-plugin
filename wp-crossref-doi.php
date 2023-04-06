@@ -30,7 +30,7 @@ add_action('admin_menu', 'wp_crossref_doi_create_settings_page');
 // wp_crossref_doi_settings_init(): Initialise les champs et sections de paramètres.
 function wp_crossref_doi_settings_init() {
     // Enregistrer les paramètres
-    register_setting('wp_crossref_doi', 'wp_crossref_doi_settings');
+    register_setting('wp_crossref_doi', 'wp_crossref_doi_options');
 
     // Ajouter une section pour les paramètres de connexion
     add_settings_section(
