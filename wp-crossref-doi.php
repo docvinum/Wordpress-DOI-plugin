@@ -89,6 +89,11 @@ function wp_crossref_doi_render_settings() {
     // Récupérer les options enregistrées
     $options = get_option('wp_crossref_doi_options');
 
+// Vérifier si $options est un tableau, sinon initialiser avec un tableau vide
+    if (!is_array($options)) {
+        $options = array();
+    }
+  
     // Vérifier si chaque option est définie, sinon utiliser une valeur par défaut
     $prod_login_id = isset($options['prod_login_id']) ? $options['prod_login_id'] : '';
     $prod_login_passwd = isset($options['prod_login_passwd']) ? $options['prod_login_passwd'] : '';
