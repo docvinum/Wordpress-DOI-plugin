@@ -87,7 +87,10 @@ add_action('admin_init', 'wp_crossref_doi_settings_init');
 // wp_crossref_doi_render_settings(): Rendu des champs et sections de paramètres.
 function wp_crossref_doi_render_settings() {
     // Récupérer les options enregistrées
+       //$options = get_option('wp_crossref_doi_options', array());
     $options = get_option('wp_crossref_doi_options', array());
+    // DEBUG  
+    var_dump($options);
 
 // Vérifier si $options est un tableau, sinon initialiser avec un tableau vide
     if (!is_array($options)) {
