@@ -115,36 +115,45 @@ function wp_crossref_doi_render_settings() {
     echo '</form>';
 }
 
+// wp_crossref_doi_get_options() pour récupérer les options de manière sécurisée
+function wp_crossref_doi_get_options() {
+    $options = wp_crossref_doi_get_options();
+    if (!is_array($options)) {
+        $options = array();
+    }
+    return $options;
+}
+
 function wp_crossref_doi_login_id_prod_render() {
-    $options = get_option('wp_crossref_doi_settings');
+    $options = wp_crossref_doi_get_options();
     ?>
     <input type='text' name='wp_crossref_doi_settings[login_id_prod]' value='<?php echo $options['login_id_prod']; ?>'>
     <?php
 }
 
 function wp_crossref_doi_login_passwd_prod_render() {
-    $options = get_option('wp_crossref_doi_settings');
+    $options = wp_crossref_doi_get_options();
     ?>
     <input type='password' name='wp_crossref_doi_settings[login_passwd_prod]' value='<?php echo $options['login_passwd_prod']; ?>'>
     <?php
 }
 
 function wp_crossref_doi_login_id_test_render() {
-    $options = get_option('wp_crossref_doi_settings');
+    $options = wp_crossref_doi_get_options();
     ?>
     <input type='text' name='wp_crossref_doi_settings[login_id_test]' value='<?php echo $options['login_id_test']; ?>'>
     <?php
 }
 
 function wp_crossref_doi_login_passwd_test_render() {
-    $options = get_option('wp_crossref_doi_settings');
+    $options = wp_crossref_doi_get_options();
     ?>
     <input type='password' name='wp_crossref_doi_settings[login_passwd_test]' value='<?php echo $options['login_passwd_test']; ?>'>
     <?php
 }
 
 function wp_crossref_doi_environment_render() {
-    $options = get_option('wp_crossref_doi_settings');
+    $options = wp_crossref_doi_get_options();
     ?>
     <select name='wp_crossref_doi_settings[environment]'>
         <option value='production' <?php selected($options['environment'], 'production'); ?>><?php _e('Production', 'wp-crossref-doi'); ?></option>
