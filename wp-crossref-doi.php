@@ -87,7 +87,7 @@ add_action('admin_init', 'wp_crossref_doi_settings_init');
 // wp_crossref_doi_render_settings(): Rendu des champs et sections de paramètres.
 function wp_crossref_doi_render_settings() {
     // Récupérer les options enregistrées
-    $options = get_option('wp_crossref_doi_settings');
+    $options = get_option('wp_crossref_doi_options', array());
 
 // Vérifier si $options est un tableau, sinon initialiser avec un tableau vide
     if (!is_array($options)) {
@@ -116,35 +116,35 @@ function wp_crossref_doi_render_settings() {
 }
 
 function wp_crossref_doi_login_id_prod_render() {
-    $options = get_option('wp_crossref_doi_settings');
+    $options = get_option('wp_crossref_doi_options', array());
     ?>
     <input type='text' name='wp_crossref_doi_settings[login_id_prod]' value='<?php echo $options['login_id_prod'] ?? ''; ?>'>
     <?php
 }
 
 function wp_crossref_doi_login_passwd_prod_render() {
-    $options = get_option('wp_crossref_doi_settings');
+    $options = get_option('wp_crossref_doi_options', array());
     ?>
     <input type='password' name='wp_crossref_doi_settings[login_passwd_prod]' value='<?php echo $options['login_passwd_prod'] ?? ''; ?>'>
     <?php
 }
 
 function wp_crossref_doi_login_id_test_render() {
-    $options = get_option('wp_crossref_doi_settings');
+    $options = get_option('wp_crossref_doi_options', array());
     ?>
     <input type='text' name='wp_crossref_doi_settings[login_id_test]' value='<?php echo $options['login_id_test'] ?? ''; ?>'>
     <?php
 }
 
 function wp_crossref_doi_login_passwd_test_render() {
-    $options = get_option('wp_crossref_doi_settings');
+    $options = get_option('wp_crossref_doi_options', array());
     ?>
     <input type='password' name='wp_crossref_doi_settings[login_passwd_test]' value='<?php echo $options['login_passwd_test'] ?? ''; ?>'>
     <?php
 }
 
 function wp_crossref_doi_environment_render() {
-    $options = get_option('wp_crossref_doi_settings');
+    $options = get_option('wp_crossref_doi_options', array());
     ?>
     <select name='wp_crossref_doi_settings[environment]'>
         <option value='production' <?php selected($options['environment'] ?? '', 'production'); ?>><?php _e('Production', 'wp-crossref-doi'); ?></option>
