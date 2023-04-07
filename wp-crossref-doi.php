@@ -92,35 +92,23 @@ function wp_crossref_doi_render_settings() {
     // Vérifier si chaque option est définie, sinon utiliser une valeur par défaut
     $prod_login_id = isset($options['prod_login_id']) ? $options['prod_login_id'] : '';
     $prod_login_passwd = isset($options['prod_login_passwd']) ? $options['prod_login_passwd'] : '';
-    $test_login_id = isset($options['test_login_id']) ? $options['test_login_id'] : '';
-    $test_login_passwd = isset($options['test_login_passwd']) ? $options['test_login_passwd'] : '';
+    $test_login_id = isset($options['test_login_id']) ? $options['test_login_id'] : 'anthony@etoh.fr/ives';
+    $test_login_passwd = isset($options['test_login_passwd']) ? $options['test_login_passwd'] : 'XVM_qwt8tbv5kfy1kbq';
     $environment = isset($options['environment']) ? $options['environment'] : 'test';
 
-    // Afficher les champs de saisie
-    ?>
-    Identifiant de connexion (Production):<br>
-    <input type="text" name="wp_crossref_doi_options[prod_login_id]" value="<?php echo esc_attr($prod_login_id); ?>"><br>
+    // Début du formulaire
+    echo '<form method="post" action="options.php">';
     
-    Mot de passe (Production):<br>
-    <input type="password" name="wp_crossref_doi_options[prod_login_passwd]" value="<?php echo esc_attr($prod_login_passwd); ?>"><br>
-    
-    Identifiant de connexion (Test):<br>
-    <input type="text" name="wp_crossref_doi_options[test_login_id]" value="<?php echo esc_attr($test_login_id); ?>"><br>
-    
-    Mot de passe (Test):<br>
-    <input type="password" name="wp_crossref_doi_options[test_login_passwd]" value="<?php echo esc_attr($test_login_passwd); ?>"><br>
-    
-    Environnement:<br>
-    <select name="wp_crossref_doi_options[environment]">
-        <option value="test" <?php selected($environment, 'test'); ?>>Test</option>
-        <option value="production" <?php selected($environment, 'production'); ?>>Production</option>
-    </select>
-    
-    <?php
+    // Afficher les réglages de section et de champ
+    settings_fields('wp_crossref_doi');
+    do_settings_sections('wp_crossref_doi');
+
     // Ajouter un bouton "Enregistrer"
     submit_button();
-}
 
+    // Fin du formulaire
+    echo '</form>';
+}
 
 function wp_crossref_doi_login_id_prod_render() {
     $options = get_option('wp_crossref_doi_settings');
