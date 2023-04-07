@@ -95,10 +95,10 @@ function wp_crossref_doi_render_settings() {
     }
   
     // Vérifier si chaque option est définie, sinon utiliser une valeur par défaut
-    $prod_login_id = isset($options['prod_login_id']) ? $options['prod_login_id'] : '';
-    $prod_login_passwd = isset($options['prod_login_passwd']) ? $options['prod_login_passwd'] : '';
-    $test_login_id = isset($options['test_login_id']) ? $options['test_login_id'] : 'anthony@etoh.fr/ives';
-    $test_login_passwd = isset($options['test_login_passwd']) ? $options['test_login_passwd'] : 'XVM_qwt8tbv5kfy1kbq';
+    $prod_login_id = isset($options['login_id_prod']) ? $options['login_id_prod'] : '';
+    $prod_login_passwd = isset($options['login_passwd_prod']) ? $options['login_passwd_prod'] : '';
+    $test_login_id = isset($options['login_id_test']) ? $options['login_id_test'] : '';
+    $test_login_passwd = isset($options['login_passwd_test']) ? $options['login_passwd_test'] : '';
     $environment = isset($options['environment']) ? $options['environment'] : 'test';
 
     // Début du formulaire
@@ -116,57 +116,43 @@ function wp_crossref_doi_render_settings() {
 }
 
 function wp_crossref_doi_login_id_prod_render() {
-        $options = get_option('wp_crossref_doi_settings');
-    if (!is_array($options)) {
-        $options = array();
-    }
+    $options = get_option('wp_crossref_doi_settings');
     ?>
-    <input type='text' name='wp_crossref_doi_settings[login_id_prod]' value='<?php echo $options['login_id_prod']; ?>'>
+    <input type='text' name='wp_crossref_doi_settings[login_id_prod]' value='<?php echo $options['login_id_prod'] ?? ''; ?>'>
     <?php
 }
 
 function wp_crossref_doi_login_passwd_prod_render() {
     $options = get_option('wp_crossref_doi_settings');
-    if (!is_array($options)) {
-        $options = array();
-    }
     ?>
-    <input type='password' name='wp_crossref_doi_settings[login_passwd_prod]' value='<?php echo $options['login_passwd_prod']; ?>'>
+    <input type='password' name='wp_crossref_doi_settings[login_passwd_prod]' value='<?php echo $options['login_passwd_prod'] ?? ''; ?>'>
     <?php
 }
 
 function wp_crossref_doi_login_id_test_render() {
     $options = get_option('wp_crossref_doi_settings');
-    if (!is_array($options)) {
-        $options = array();
-    }
     ?>
-    <input type='text' name='wp_crossref_doi_settings[login_id_test]' value='<?php echo $options['login_id_test']; ?>'>
+    <input type='text' name='wp_crossref_doi_settings[login_id_test]' value='<?php echo $options['login_id_test'] ?? ''; ?>'>
     <?php
 }
 
 function wp_crossref_doi_login_passwd_test_render() {
     $options = get_option('wp_crossref_doi_settings');
-    if (!is_array($options)) {
-        $options = array();
-    }
     ?>
-    <input type='password' name='wp_crossref_doi_settings[login_passwd_test]' value='<?php echo $options['login_passwd_test']; ?>'>
+    <input type='password' name='wp_crossref_doi_settings[login_passwd_test]' value='<?php echo $options['login_passwd_test'] ?? ''; ?>'>
     <?php
 }
 
 function wp_crossref_doi_environment_render() {
     $options = get_option('wp_crossref_doi_settings');
-    if (!is_array($options)) {
-        $options = array();
-    }
     ?>
     <select name='wp_crossref_doi_settings[environment]'>
-        <option value='production' <?php selected($options['environment'], 'production'); ?>><?php _e('Production', 'wp-crossref-doi'); ?></option>
-        <option value='test' <?php selected($options['environment'], 'test'); ?>><?php _e('Test', 'wp-crossref-doi'); ?></option>
+        <option value='production' <?php selected($options['environment'] ?? '', 'production'); ?>><?php _e('Production', 'wp-crossref-doi'); ?></option>
+        <option value='test' <?php selected($options['environment'] ?? '', 'test'); ?>><?php _e('Test', 'wp-crossref-doi'); ?></option>
     </select>
     <?php
 }
+
 
 // wp_crossref_doi_add_button(): Ajoute le bouton 'DOI' dans l'écran 'Posts'.
 function wp_crossref_doi_add_button($actions, $post) {
