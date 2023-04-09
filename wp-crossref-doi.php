@@ -87,7 +87,6 @@ add_action('admin_init', 'wp_crossref_doi_settings_init');
 // wp_crossref_doi_render_settings(): Rendu des champs et sections de paramètres.
 function wp_crossref_doi_render_settings() {
     // Récupérer les options enregistrées
-       //$options = get_option('wp_crossref_doi_options', array());
     $options = get_option('wp_crossref_doi_options', array());
     // DEBUG  
     var_dump($options);
@@ -351,7 +350,14 @@ function wp_crossref_doi_submit_xml($xml, $mode = 'test') {
     }
 
     // Récupérer les paramètres de l'utilisateur
-    $options = get_option('wp_crossref_doi_options');
+    $options = get_option('wp_crossref_doi_options', array(
+        'login_id_prod' => '',
+        'prod_login_passwd' => '',
+        'login_id_test' => '',
+        'test_login_passwd' => '',
+        'environment' => 'test'
+    ));
+    
     $login_id = $options[$mode . '_login_id'];
     $login_passwd = $options[$mode . '_login_passwd'];
 
