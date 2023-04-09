@@ -348,49 +348,56 @@ function wp_crossref_doi_validate_xml($xml) {
 }
 
 // wp_crossref_doi_submit_xml(): Soumet le fichier XML validé à l'API CrossRef en utilisant HTTPS POST.
-function wp_crossref_doi_submit_xml($xml, $mode = 'test') {
-    // Choisir l'URL appropriée en fonction du mode
-    if ($mode == 'production') {
-        $url = 'https://doi.crossref.org/servlet/deposit';
+
+function wp_crossref_doi_submit_xml($xml, $is_test = false) {
+    // Récupérer les options enregistrées
+    $options = get_option('wp_crossref_doi_settings');
+
+    // Récupérer les paramètres individuels à partir de l'array $options
+    $login_id_prod = isset($options['login_id_prod']) ? $options['login_id_prod'] : '';
+    $login_passwd_prod = isset($options['login_passwd_prod']) ? $options['login_passwd_prod'] : '';
+    $login_id_test = isset($options['login_id_test']) ? $options['login_id_test'] : '';
+    $login_passwd_test = isset($options['login_passwd_test']) ? $options['login_passwd_test'] : '';
+    $environment = isset($options['environment']) ? $options['environment'] : 'test';
+
+    // Sélectionner l'identifiant et le mot de passe en fonction de l'environnement (test ou production)
+    if ($is_test) {
+        $login_id = $login_id_test;
+        $login_passwd = $login_passwd_test;
     } else {
-        $url = 'https://test.crossref.org/servlet/deposit';
+        $login_id = $login_id_prod;
+        $login_passwd = $login_passwd_prod;
     }
 
-    // Récupérer les paramètres de l'utilisateur
-    $options = get_option('wp_crossref_doi_settings', array(
-        'login_id_prod' => '',
-        'login_passwd_prod' => '',
-        'login_id_test' => '',
-        'login_passwd_test' => '',
-        'environment' => 'test'
-    ));
-    
-    
-    $login_id = $options[$mode . '_login_id'];
-    $login_passwd = $options[$mode . '_login_passwd'];
+    // Déterminer l'URL en fonction de l'environnement
+    $url = ($environment === 'test') ? "https://test.crossref.org/servlet/depositor" : "https://doi.crossref.org/servlet/depositor";
 
-    // Initialiser cURL
-    $ch = curl_init($url);
+    // Préparer la requête cURL
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_USERPWD, $login_id . ":" . $login_passwd);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/xml'));
 
-    // Configurer cURL
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-        'operation' => 'doMDUpload',
-        'login_id' => $login_id,
-        'login_passwd' => $login_passwd,
-        'fname' => new CURLFile($xml, 'application/xml', 'filename.xml')
-    ));
-
-    // Exécuter cURL et récupérer la réponse
+    // Exécuter la requête et récupérer la réponse
     $response = curl_exec($ch);
+    $error = curl_error($ch);
 
-    // Fermer cURL
+    // Fermer la session cURL
     curl_close($ch);
 
-    // Retourner la réponse
-    return $response;
+    // Gérer les erreurs et les réponses
+    if ($error) {
+        return array('status' => 'error', 'message' => $error);
+    } else {
+        return array('status' => 'success', 'message' => $response);
+    }
 }
+
+
+
 
 // wp_crossref_doi_handle_errors(): Gère les erreurs potentielles lors de l'interaction avec l'API CrossRef et informe l'utilisateur.
 function wp_crossref_doi_handle_errors($response) {
