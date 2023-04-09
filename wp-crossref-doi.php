@@ -30,7 +30,7 @@ add_action('admin_menu', 'wp_crossref_doi_create_settings_page');
 // wp_crossref_doi_settings_init(): Initialise les champs et sections de paramètres.
 function wp_crossref_doi_settings_init() {
     // Enregistrer les paramètres
-    register_setting('wp_crossref_doi', 'wp_crossref_doi_options');
+    register_setting('wp_crossref_doi', 'wp_crossref_doi_settings');
 
     // Ajouter une section pour les paramètres de connexion
     add_settings_section(
@@ -87,7 +87,14 @@ add_action('admin_init', 'wp_crossref_doi_settings_init');
 // wp_crossref_doi_render_settings(): Rendu des champs et sections de paramètres.
 function wp_crossref_doi_render_settings() {
     // Récupérer les options enregistrées
-    $options = get_option('wp_crossref_doi_options', array());
+    $options = get_option('wp_crossref_doi_settings', array(
+        'login_id_prod' => '',
+        'login_passwd_prod' => '',
+        'login_id_test' => '',
+        'login_passwd_test' => '',
+        'environment' => 'test'
+    ));
+    
     // DEBUG  
     var_dump($options);
 
@@ -118,35 +125,35 @@ function wp_crossref_doi_render_settings() {
 }
 
 function wp_crossref_doi_login_id_prod_render() {
-    $options = get_option('wp_crossref_doi_options', array());
+    $options = get_option('wp_crossref_doi_settings', array());
     ?>
     <input type='text' name='wp_crossref_doi_settings[login_id_prod]' value='<?php echo $options['login_id_prod'] ?? ''; ?>'>
     <?php
 }
 
 function wp_crossref_doi_login_passwd_prod_render() {
-    $options = get_option('wp_crossref_doi_options', array());
+    $options = get_option('wp_crossref_doi_settings', array());
     ?>
     <input type='password' name='wp_crossref_doi_settings[login_passwd_prod]' value='<?php echo $options['login_passwd_prod'] ?? ''; ?>'>
     <?php
 }
 
 function wp_crossref_doi_login_id_test_render() {
-    $options = get_option('wp_crossref_doi_options', array());
+    $options = get_option('wp_crossref_doi_settings', array());
     ?>
     <input type='text' name='wp_crossref_doi_settings[login_id_test]' value='<?php echo $options['login_id_test'] ?? ''; ?>'>
     <?php
 }
 
 function wp_crossref_doi_login_passwd_test_render() {
-    $options = get_option('wp_crossref_doi_options', array());
+    $options = get_option('wp_crossref_doi_settings', array());
     ?>
     <input type='password' name='wp_crossref_doi_settings[login_passwd_test]' value='<?php echo $options['login_passwd_test'] ?? ''; ?>'>
     <?php
 }
 
 function wp_crossref_doi_environment_render() {
-    $options = get_option('wp_crossref_doi_options', array());
+    $options = get_option('wp_crossref_doi_settings', array());
     ?>
     <select name='wp_crossref_doi_settings[environment]'>
         <option value='production' <?php selected($options['environment'] ?? '', 'production'); ?>><?php _e('Production', 'wp-crossref-doi'); ?></option>
@@ -350,13 +357,14 @@ function wp_crossref_doi_submit_xml($xml, $mode = 'test') {
     }
 
     // Récupérer les paramètres de l'utilisateur
-    $options = get_option('wp_crossref_doi_options', array(
+    $options = get_option('wp_crossref_doi_settings', array(
         'login_id_prod' => '',
-        'prod_login_passwd' => '',
+        'login_passwd_prod' => '',
         'login_id_test' => '',
-        'test_login_passwd' => '',
+        'login_passwd_test' => '',
         'environment' => 'test'
     ));
+    
     
     $login_id = $options[$mode . '_login_id'];
     $login_passwd = $options[$mode . '_login_passwd'];
