@@ -164,19 +164,48 @@ function wp_crossref_doi_environment_render() {
 
 
 // wp_crossref_doi_add_button(): Ajoute le bouton 'DOI' dans l'écran 'Posts'.
-function wp_crossref_doi_add_button($actions, $post) {
-    if ('publish' == $post->post_status && current_user_can('edit_post', $post->ID)) {
-        $actions['crossref_doi'] = sprintf(
-            '<a href="%s" aria-label="%s">%s</a>',
-            admin_url('admin.php?page=crossref-doi-metadata&amp;post_id=' . $post->ID),
-            esc_attr__('Générer DOI', 'wp-crossref-doi'),
-            esc_html__('DOI', 'wp-crossref-doi')
-        );
+function wp_crossref_doi_add_button() {
+    global $post;
+
+    // Vérifiez si le post est de type 'post'
+    if ($post->post_type !== 'post') {
+        return;
     }
 
-    return $actions;
+    // Ajoutez le code HTML pour le bouton et la boîte de dialogue modale
+    echo '
+    <div id="wp-crossref-doi-dialog" title="Générer DOI" style="display:none;">
+        <form id="wp-crossref-doi-form" method="post" action="' . admin_url('admin-post.php') . '">
+            <input type="hidden" name="action" value="wp_crossref_doi_gen" />
+            <input type="hidden" name="post_id" value="' . $post->ID . '" />
+            ' . wp_nonce_field('wp_crossref_doi_gen', '_wpnonce', true, false) . '
+            <p>Êtes-vous sûr de vouloir générer un DOI pour cet article ?</p>
+        </form>
+    </div>
+    <div id="wp-crossref-doi-button-container">
+        <input type="button" id="wp-crossref-doi-button" class="button button-primary" value="DOI" />
+    </div>';
+
+    // Ajoutez du code JavaScript pour gérer la boîte de dialogue modale et le bouton
+    echo "
+    <script type='text/javascript'>
+        jQuery(document).ready(function($) {
+            $('#wp-crossref-doi-button').on('click', function() {
+                $('#wp-crossref-doi-dialog').dialog({
+                    modal: true,
+                    buttons: {
+                        'Générer DOI': function() {
+                            $('#wp-crossref-doi-form').submit();
+                        },
+                        'Annuler': function() {
+                            $(this).dialog('close');
+                        }
+                    }
+                });
+            });
+        });
+    </script>";
 }
-add_filter('post_row_actions', 'wp_crossref_doi_add_button', 10, 2);
 
 // wp_crossref_doi_generate(): Génère un DOI unique et l'enregistre dans les "Custom Fields" de l'article.
 function wp_crossref_doi_generate($post_id) {
@@ -466,13 +495,34 @@ function wp_crossref_doi_display_response($response) {
  * @param string $hook The current admin page hook.
  */
 function wp_crossref_doi_enqueue_admin_scripts($hook) {
-    if ('post.php' !== $hook && 'post-new.php' !== $hook) {
-        return;
-    }
+    global $post;
 
-    wp_register_script('wp-crossref-doi-admin-script', plugins_url('js/admin-script.js', __FILE__), array('jquery'), '1.0.0', true);
-    wp_enqueue_script('wp-crossref-doi-admin-script');
+    if ($hook == 'post.php' || $hook == 'post-new.php') {
+        wp_enqueue_script('wp_crossref_doi_admin', plugins_url('js/admin.js', __FILE__), array('jquery'), '1.0.0', true);
+        
+        wp_enqueue_script('jquery');
+        wp_enqueue_script('jquery-ui-core');
+        wp_enqueue_script('jquery-ui-dialog');
+        wp_enqueue_style('wp-jquery-ui-dialog', '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css');
+        
+        wp_localize_script('wp_crossref_doi_admin', 'wp_crossref_doi_vars', array(
+                'wp_crossref_doi_nonce' => wp_create_nonce('wp_crossref_doi_nonce'),
+                'wp_crossref_doi_ajaxurl' => admin_url('admin-ajax.php')
+            )
+        );
+    }
 }
+add_action('admin_enqueue_scripts', 'wp_crossref_doi_enqueue_admin_scripts');
+
+// to delete
+//  function wp_crossref_doi_enqueue_admin_scripts($hook) {
+//    if ('post.php' !== $hook && 'post-new.php' !== $hook) {
+//        return;
+//    }
+//
+//    wp_register_script('wp-crossref-doi-admin-script', plugins_url('js/admin-script.js', __FILE__), array('jquery'), '1.0.0', true);
+//    wp_enqueue_script('wp-crossref-doi-admin-script');
+//}
 
 add_action('admin_enqueue_scripts', 'wp_crossref_doi_enqueue_admin_scripts');
 
