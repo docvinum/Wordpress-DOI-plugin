@@ -95,8 +95,8 @@ function wp_crossref_doi_render_settings() {
         'environment' => 'test'
     ));
     
-    // DEBUG  
-    var_dump($options);
+    // DEBUG afficher les paramètres enregistrés
+    // var_dump($options);
 
 // Vérifier si $options est un tableau, sinon initialiser avec un tableau vide
     if (!is_array($options)) {
@@ -348,7 +348,6 @@ function wp_crossref_doi_validate_xml($xml) {
 }
 
 // wp_crossref_doi_submit_xml(): Soumet le fichier XML validé à l'API CrossRef en utilisant HTTPS POST.
-
 function wp_crossref_doi_submit_xml($xml, $is_test = false) {
     // Récupérer les options enregistrées
     $options = get_option('wp_crossref_doi_settings');
@@ -395,9 +394,6 @@ function wp_crossref_doi_submit_xml($xml, $is_test = false) {
         return array('status' => 'success', 'message' => $response);
     }
 }
-
-
-
 
 // wp_crossref_doi_handle_errors(): Gère les erreurs potentielles lors de l'interaction avec l'API CrossRef et informe l'utilisateur.
 function wp_crossref_doi_handle_errors($response) {
