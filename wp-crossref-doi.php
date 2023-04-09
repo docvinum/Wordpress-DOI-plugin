@@ -498,11 +498,8 @@ function wp_crossref_doi_enqueue_admin_scripts($hook) {
     global $post;
 
     if ($hook == 'post.php' || $hook == 'post-new.php') {
-        wp_enqueue_script('wp_crossref_doi_admin', plugins_url('js/admin.js', __FILE__), array('jquery'), '1.0.0', true);
+        wp_enqueue_script('wp_crossref_doi_admin', plugins_url('js/admin.js', __FILE__), array('jquery', 'jquery-ui-core', 'jquery-ui-dialog'), '1.0.0', true);
         
-        wp_enqueue_script('jquery');
-        wp_enqueue_script('jquery-ui-core');
-        wp_enqueue_script('jquery-ui-dialog');
         wp_enqueue_style('wp-jquery-ui-dialog', '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css');
         
         wp_localize_script('wp_crossref_doi_admin', 'wp_crossref_doi_vars', array(
@@ -513,6 +510,7 @@ function wp_crossref_doi_enqueue_admin_scripts($hook) {
     }
 }
 add_action('admin_enqueue_scripts', 'wp_crossref_doi_enqueue_admin_scripts');
+
 
 // to delete
 //  function wp_crossref_doi_enqueue_admin_scripts($hook) {
