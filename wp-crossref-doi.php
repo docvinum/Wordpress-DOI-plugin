@@ -257,6 +257,50 @@ function wp_crossref_doi_quick_edit_button($column_name, $post_type) {
 }
 add_action('quick_edit_custom_box', 'wp_crossref_doi_quick_edit_button', 10, 2);
 
+// gestionnaire pour la requête AJAX
+function wp_crossref_doi_generate_ajax() {
+    // Vérifier le nonce
+    check_ajax_referer('wp_crossref_doi_ajax_nonce', 'nonce');
+
+    // Récupérer l'ID du post
+    $post_id = intval($_POST['post_id']);
+
+    // Récupérer les informations de l'article
+    $post = get_post($post_id);
+    $title = get_the_title($post);
+    $author = get_the_author_meta('display_name', $post->post_author);
+    $date_published = get_the_date('Y-m-d', $post);
+
+    // Construire le XML pour l'API CrossRef
+    // Utilisez la bibliothèque PHP SimpleXML ou d'autres méthodes pour créer le XML
+    $xml = '<?xml version="1.0" encoding="UTF-8"?>';
+    $xml .= '<!DOCTYPE ...>';
+    // Ajoutez les éléments XML nécessaires en utilisant les informations de l'article
+
+    // Récupérer les informations d'identification de l'API CrossRef
+    $options = get_option('wp_crossref_doi_options');
+    $login_id = $options['login_id_prod'];
+    $password = $options['prod_login_passwd'];
+
+    // Soumettre le XML à l'API CrossRef et récupérer le DOI généré
+    $response = wp_crossref_doi_submit_xml($xml, $login_id, $password);
+
+    // Extraire le DOI généré de la réponse
+    $generated_doi = extract_doi_from_response($response);
+
+    // Enregistrer le DOI généré en tant que métadonnée personnalisée pour l'article concerné
+    update_post_meta($post_id, 'DOI', $generated_doi);
+
+    // Envoyer le DOI généré en réponse à la requête AJAX
+    wp_send_json_success(array('doi' => $generated_doi));
+
+    // Terminer l'exécution
+    wp_die();
+}
+add_action('wp_ajax_wp_crossref_doi_generate', 'wp_crossref_doi_generate_ajax');
+
+
+
 // wp_crossref_doi_create_xml(): Génère le fichier XML en utilisant les métadonnées de l'article et le modèle fourni par CrossRef.
 function wp_crossref_doi_create_xml($post_id, $metadata) {
     // Récupérer les informations de l'article

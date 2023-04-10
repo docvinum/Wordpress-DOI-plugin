@@ -48,3 +48,31 @@ jQuery(document).ready(function($) {
         $dialog.dialog('open');
     });
 });
+
+jQuery(document).on('click', '.generate-doi', function() {
+    // Récupérer l'ID du post
+    const postId = jQuery(this).closest('tr').attr('id').replace('post-', '');
+
+    // Appeler la fonction AJAX pour générer le DOI
+    generateDOI(postId);
+});
+
+function generateDOI(postId) {
+    jQuery.ajax({
+        url: wp_crossref_doi_ajax.ajax_url,
+        type: 'POST',
+        data: {
+            action: 'wp_crossref_doi_generate_ajax',
+            post_id: postId,
+            nonce: wp_crossref_doi_ajax.nonce
+        },
+        success: function(response) {
+            // Afficher un message de succès ou mettre à jour l'interface utilisateur avec le DOI généré
+            console.log('DOI généré:', response);
+        },
+        error: function(xhr, status, error) {
+            // Gérer les erreurs
+            console.error('Erreur lors de la génération du DOI:', error);
+        }
+    });
+}
