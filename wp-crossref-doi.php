@@ -243,6 +243,20 @@ function wp_crossref_doi_save_metadata($post_id) {
     }
 }
 
+// Ajoutez le bouton "Générer DOI"
+function wp_crossref_doi_quick_edit_button($column_name, $post_type) {
+    if ($column_name === 'DOI' && $post_type === 'post') {
+        ?>
+        <fieldset class="inline-edit-col-right">
+            <div class="inline-edit-col">
+                <button type="button" class="button button-primary generate-doi">Générer DOI</button>
+            </div>
+        </fieldset>
+        <?php
+    }
+}
+add_action('quick_edit_custom_box', 'wp_crossref_doi_quick_edit_button', 10, 2);
+
 // wp_crossref_doi_create_xml(): Génère le fichier XML en utilisant les métadonnées de l'article et le modèle fourni par CrossRef.
 function wp_crossref_doi_create_xml($post_id, $metadata) {
     // Récupérer les informations de l'article
