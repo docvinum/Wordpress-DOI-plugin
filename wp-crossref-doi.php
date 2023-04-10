@@ -271,6 +271,7 @@ function wp_crossref_doi_generate_ajax() {
     $author = get_the_author_meta('display_name', $post->post_author);
     $date_published = get_the_date('Y-m-d', $post);
 
+
     // Construire le XML pour l'API CrossRef
     // Utilisez la bibliothèque PHP SimpleXML ou d'autres méthodes pour créer le XML
     $xml = '<?xml version="1.0" encoding="UTF-8"?>';
