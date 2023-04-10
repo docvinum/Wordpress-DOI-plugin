@@ -486,9 +486,6 @@ add_action('admin_enqueue_scripts', 'wp_crossref_doi_enqueue_admin_scripts');
 add_action('admin_menu', 'wp_crossref_doi_create_settings_page');
 add_action('admin_init', 'wp_crossref_doi_settings_init');
 
-// Ajouter le bouton DOI aux actions des articles
-add_filter('post_row_actions', 'wp_crossref_doi_add_button', 10, 2);
-
 // Gérer les requêtes AJAX pour générer le DOI et afficher le formulaire de métadonnées
 add_action('wp_ajax_wp_crossref_doi_generate', 'wp_crossref_doi_generate_ajax_handler');
 add_action('wp_ajax_wp_crossref_doi_render_metadata_form', 'wp_crossref_doi_render_metadata_form_ajax_handler');
