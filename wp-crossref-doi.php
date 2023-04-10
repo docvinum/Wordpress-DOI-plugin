@@ -163,49 +163,6 @@ function wp_crossref_doi_environment_render() {
 }
 
 
-// wp_crossref_doi_add_button(): Ajoute le bouton 'DOI' dans l'écran 'Posts'.
-function wp_crossref_doi_add_button() {
-    global $post;
-
-    // Vérifiez si le post est de type 'post'
-    if ($post->post_type !== 'post') {
-        return;
-    }
-
-    // Ajoutez le code HTML pour le bouton et la boîte de dialogue modale
-    echo '
-    <div id="wp-crossref-doi-dialog" title="Générer DOI" style="display:none;">
-        <form id="wp-crossref-doi-form" method="post" action="' . admin_url('admin-post.php') . '">
-            <input type="hidden" name="action" value="wp_crossref_doi_gen" />
-            <input type="hidden" name="post_id" value="' . $post->ID . '" />
-            ' . wp_nonce_field('wp_crossref_doi_gen', '_wpnonce', true, false) . '
-            <p>Êtes-vous sûr de vouloir générer un DOI pour cet article ?</p>
-        </form>
-    </div>
-    <div id="wp-crossref-doi-button-container">
-        <input type="button" id="wp-crossref-doi-button" class="button button-primary" value="DOI" />
-    </div>';
-
-    // Ajoutez du code JavaScript pour gérer la boîte de dialogue modale et le bouton
-    echo "
-    <script type='text/javascript'>
-        jQuery(document).ready(function($) {
-            $('#wp-crossref-doi-button').on('click', function() {
-                $('#wp-crossref-doi-dialog').dialog({
-                    modal: true,
-                    buttons: {
-                        'Générer DOI': function() {
-                            $('#wp-crossref-doi-form').submit();
-                        },
-                        'Annuler': function() {
-                            $(this).dialog('close');
-                        }
-                    }
-                });
-            });
-        });
-    </script>";
-}
 
 // wp_crossref_doi_generate(): Génère un DOI unique et l'enregistre dans les "Custom Fields" de l'article.
 function wp_crossref_doi_generate($post_id) {
